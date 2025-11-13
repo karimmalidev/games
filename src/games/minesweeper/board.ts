@@ -1,17 +1,6 @@
 import { createArray2D } from "../../lib/array";
 import { shuffle } from "../../lib/random";
-
-export type CellType = {
-  value: "mine" | number;
-  state: "hidden" | "shown" | "flagged";
-};
-
-export type BoardType = {
-  state: "fresh" | "playing" | "win" | "lose";
-  rows: number;
-  cols: number;
-  cells: CellType[][];
-};
+import type { BoardType, CellType } from "./board-type";
 
 export function createBoard(cols: number, rows: number): BoardType {
   return {
@@ -109,6 +98,10 @@ export function countMines(board: BoardType) {
 
 export function sweep(board: BoardType, row: number, col: number) {
   const cell = board.cells[row][col];
+  if (cell.state == "flagged") {
+    return;
+  }
+
   if (cell.value == "mine") {
     board.state = "lose";
     board.cells.flat().forEach((cell) => {
@@ -168,4 +161,13 @@ export function isEligibleToWin(board: BoardType): boolean {
     }
   }
   return true;
+}
+
+export function toggleFlag(board: BoardType, row: number, col: number) {
+  const cell = board.cells[row][col];
+  if (cell.state == "flagged") {
+    cell.state = "hidden";
+  } else if (cell.state == "hidden" && getRemainingMinesCount(board) >= 1) {
+    cell.state = "flagged";
+  }
 }

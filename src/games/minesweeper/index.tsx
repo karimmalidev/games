@@ -1,5 +1,11 @@
-import { PiBombFill } from "react-icons/pi";
-import { createBoard, getRemainingMinesCount, putMines, sweep } from "./board";
+import { PiBombFill, PiFlagPennantFill } from "react-icons/pi";
+import {
+  createBoard,
+  getRemainingMinesCount,
+  putMines,
+  sweep,
+  toggleFlag,
+} from "./board";
 import clsx from "clsx";
 import Game from "../../ui/templates/game";
 import { useLocalStorage } from "../../ui/hooks/use-local-storage";
@@ -22,7 +28,7 @@ export default function Minesweeper() {
     );
   }, [board]);
 
-  function onCellClick(row: number, col: number) {
+  function doSweepAction(row: number, col: number) {
     if (board.state == "fresh") {
       putMines(board, BOARD_MINES, row, col);
     }
@@ -30,23 +36,34 @@ export default function Minesweeper() {
     setBoard((b) => ({ ...b }));
   }
 
-  function onRestart() {
-    setBoard(createBoard(BOARD_COLS, BOARD_ROWS));
+  function doToggleFlagAction(row: number, col: number) {
+    if (board.state == "fresh") {
+      doSweepAction(row, col);
+    } else {
+      toggleFlag(board, row, col);
+      setBoard((b) => ({ ...b }));
+    }
+  }
+
+  function doRestartAction() {
+    if (board.state != "fresh") {
+      setBoard(createBoard(BOARD_COLS, BOARD_ROWS));
+    }
   }
 
   return (
-    <Game status={[["Remaining", remaining]]} onRestart={onRestart}>
+    <Game status={[["Remaining", remaining]]} onRestart={doRestartAction}>
       <div
         className="relative grid gap-[calc(clamp(2px,0.5vw,4px))] rounded-sm bg-zinc-400 p-[calc(clamp(2px,0.5vw,4px))]"
         style={{ gridTemplateColumns: `repeat(${board.cols},1fr)` }}
       >
         {(board.state == "win" || board.state == "lose") && (
-          <div className="absolute flex h-full w-full flex-col items-center justify-center gap-16 bg-black/40 text-center backdrop-blur-[2px]">
+          <div className="absolute flex h-full w-full flex-col items-center justify-center gap-16 bg-slate-600/80 text-center backdrop-blur-[2px]">
             <h2 className="text-5xl font-black text-white/60">
               {board.state == "win" ? "Winner!" : "Game Over"}
             </h2>
             <button
-              onClick={onRestart}
+              onClick={doRestartAction}
               className="cursor-pointer rounded-md bg-white/30 px-4 py-2 font-medium text-black/60 backdrop-blur-xs hover:bg-white/40 active:bg-white/50"
             >
               New game
@@ -57,7 +74,7 @@ export default function Minesweeper() {
           cells.map((cell, col) => (
             <button
               className={clsx(
-                "flex aspect-square items-center justify-center overflow-hidden rounded-sm duration-300 ease-out",
+                "flex aspect-square items-center justify-center overflow-hidden rounded-sm text-center duration-300 ease-out",
                 cell.state == "shown" && cell.value == "mine" && "text-black",
                 cell.state == "shown" && cell.value == 1 && "text-blue-700",
                 cell.state == "shown" && cell.value == 2 && "text-green-700",
@@ -71,9 +88,17 @@ export default function Minesweeper() {
                 cell.state != "shown"
                   ? "cursor-pointer border-r-4 border-b-4 border-black/10 bg-zinc-200 hover:bg-orange-200 active:bg-orange-300"
                   : "border-none",
+                cell.state == "flagged" && "bg-zinc-200/50 text-red-700",
               )}
               key={`${row}:${col}`}
-              onClick={() => onCellClick(row, col)}
+              onClick={(e) => {
+                e.preventDefault();
+                doSweepAction(row, col);
+              }}
+              onContextMenu={(e) => {
+                e.preventDefault();
+                doToggleFlagAction(row, col);
+              }}
             >
               <span className="text-[calc(clamp(24px,6vw,32px))] font-bold">
                 {cell.state == "shown" && cell.value == "mine" && (
@@ -83,6 +108,9 @@ export default function Minesweeper() {
                   typeof cell.value == "number" &&
                   cell.value > 0 &&
                   cell.value}
+                {cell.state == "flagged" && (
+                  <PiFlagPennantFill className="text-[0.8em]" />
+                )}
               </span>
             </button>
           )),

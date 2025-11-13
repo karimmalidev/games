@@ -44,9 +44,7 @@ export default function Game({
         <Button onClick={onRestart} Icon={VscDebugRestart} />
       </header>
 
-      <main className="mx-auto aspect-2/3 w-full max-w-xl border border-black/10">
-        {children}
-      </main>
+      <main className="mx-auto aspect-2/3 w-full max-w-xl">{children}</main>
     </div>
   );
 }
