@@ -28,6 +28,78 @@ export function putMines(
   putNumbers(board);
 }
 
+export function countMines(board: BoardType) {
+  let sum = 0;
+
+  for (const cells of board.cells) {
+    for (const { value } of cells) {
+      if (value == "mine") {
+        sum++;
+      }
+    }
+  }
+
+  return sum;
+}
+
+export function sweep(board: BoardType, row: number, col: number) {
+  const cell = board.cells[row][col];
+  if (cell.state == "flagged") {
+    return;
+  }
+
+  if (cell.value == "mine") {
+    board.state = "lose";
+    board.cells.flat().forEach((cell) => {
+      cell.state = "shown";
+    });
+    return;
+  }
+
+  board.state = "playing";
+
+  if (cell.value == 0) {
+    sweepRecursive(board, row, col);
+  } else {
+    cell.state = "shown";
+  }
+
+  if (isEligibleToWin(board)) {
+    board.state = "win";
+  }
+}
+
+export function getRemainingMinesCount(board: BoardType) {
+  let count = 0;
+  for (const cell of board.cells.flat()) {
+    if (cell.value == "mine") {
+      count++;
+    }
+    if (cell.state == "flagged") {
+      count--;
+    }
+  }
+  return count;
+}
+
+export function isEligibleToWin(board: BoardType): boolean {
+  for (const cell of board.cells.flat()) {
+    if (cell.value != "mine" && cell.state != "shown") {
+      return false;
+    }
+  }
+  return true;
+}
+
+export function toggleFlag(board: BoardType, row: number, col: number) {
+  const cell = board.cells[row][col];
+  if (cell.state == "flagged") {
+    cell.state = "hidden";
+  } else if (cell.state == "hidden" && getRemainingMinesCount(board) >= 1) {
+    cell.state = "flagged";
+  }
+}
+
 function getMineableCells(board: BoardType, row: number, col: number) {
   const avoidedCellsPositions = [
     { row, col },
@@ -82,92 +154,19 @@ function getNeighbors(
   return neighbors;
 }
 
-export function countMines(board: BoardType) {
-  let sum = 0;
-
-  for (const cells of board.cells) {
-    for (const { value } of cells) {
-      if (value == "mine") {
-        sum++;
-      }
-    }
-  }
-
-  return sum;
-}
-
-export function sweep(board: BoardType, row: number, col: number) {
+function sweepRecursive(board: BoardType, row: number, col: number) {
   const cell = board.cells[row][col];
-  if (cell.state == "flagged") {
+
+  if (cell.state != "hidden" || cell.value == "mine") {
     return;
   }
 
-  if (cell.value == "mine") {
-    board.state = "lose";
-    board.cells.flat().forEach((cell) => {
-      cell.state = "shown";
-    });
-    return;
-  }
-
-  board.state = "playing";
-
+  cell.state = "shown";
   if (cell.value > 0) {
-    cell.state = "shown";
     return;
   }
 
-  function sweepRecursive(row: number, col: number) {
-    const cell = board.cells[row][col];
-
-    if (cell.state != "hidden" || cell.value == "mine") {
-      return;
-    }
-
-    cell.state = "shown";
-    if (cell.value > 0) {
-      return;
-    }
-
-    getNeighbors(board, row, col).forEach(({ row, col }) =>
-      sweepRecursive(row, col),
-    );
-  }
-
-  sweepRecursive(row, col);
-
-  if (isEligibleToWin(board)) {
-    board.state = "win";
-  }
-}
-
-export function getRemainingMinesCount(board: BoardType) {
-  let count = 0;
-  for (const cell of board.cells.flat()) {
-    if (cell.value == "mine") {
-      count++;
-    }
-    if (cell.state == "flagged") {
-      count--;
-    }
-  }
-  return count;
-}
-
-export function isEligibleToWin(board: BoardType): boolean {
-  for (const cell of board.cells.flat()) {
-    if (cell.value != "mine" && cell.state != "shown") {
-      return false;
-    }
-  }
-  return true;
-}
-
-export function toggleFlag(board: BoardType, row: number, col: number) {
-  const cell = board.cells[row][col];
-  if (cell.state == "flagged") {
-    cell.state = "hidden";
-  } else if (cell.state == "hidden" && getRemainingMinesCount(board) >= 1) {
-    cell.state = "flagged";
-  }
+  getNeighbors(board, row, col).forEach(({ row, col }) =>
+    sweepRecursive(board, row, col),
+  );
 }

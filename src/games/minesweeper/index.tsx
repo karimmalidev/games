@@ -54,17 +54,24 @@ export default function Minesweeper() {
   return (
     <Game status={[["Remaining", remaining]]} onRestart={doRestartAction}>
       <div
-        className="relative grid gap-[calc(clamp(2px,0.5vw,4px))] rounded-sm bg-zinc-400 p-[calc(clamp(2px,0.5vw,4px))]"
+        className="relative grid gap-[calc(clamp(2px,0.5vw,4px))] rounded-sm bg-stone-400 p-[calc(clamp(2px,0.5vw,4px))]"
         style={{ gridTemplateColumns: `repeat(${board.cols},1fr)` }}
       >
         {(board.state == "win" || board.state == "lose") && (
-          <div className="absolute flex h-full w-full flex-col items-center justify-center gap-16 bg-slate-600/80 text-center backdrop-blur-[2px]">
-            <h2 className="text-5xl font-black text-white/60">
+          <div className="absolute flex h-full w-full flex-col items-center justify-center gap-16 bg-stone-600/80 text-center backdrop-blur-[2px]">
+            <h2
+              className={clsx(
+                "flex flex-col items-center gap-[0.2em] text-5xl font-extrabold text-shadow-lg",
+                board.state == "win"
+                  ? "text-green-200/50 text-shadow-green-500/30"
+                  : "text-red-200/50 text-shadow-red-500/30",
+              )}
+            >
               {board.state == "win" ? "Winner!" : "Game Over"}
             </h2>
             <button
               onClick={doRestartAction}
-              className="cursor-pointer rounded-md bg-white/30 px-4 py-2 font-medium text-black/60 backdrop-blur-xs hover:bg-white/40 active:bg-white/50"
+              className="cursor-pointer rounded-md bg-orange-500/30 px-4 py-2 font-bold text-white/60 backdrop-blur-xs hover:bg-orange-500/40 active:bg-orange-500/50"
             >
               New game
             </button>
@@ -85,10 +92,13 @@ export default function Minesweeper() {
                 cell.state == "shown" &&
                   cell.value == "mine" &&
                   "bg-red-400 text-black inset-ring-2 inset-ring-red-700",
-                cell.state != "shown"
-                  ? "cursor-pointer border-r-4 border-b-4 border-black/10 bg-zinc-200 hover:bg-orange-200 active:bg-orange-300"
-                  : "border-none",
-                cell.state == "flagged" && "bg-zinc-200/50 text-red-700",
+                cell.state != "shown" &&
+                  "cursor-pointer hover:bg-orange-100 active:bg-orange-200",
+                cell.state == "hidden" &&
+                  "border-r-3 border-b-3 border-black/10 bg-stone-300 shadow-[2px_2px_0_rgba(0,0,0,0.1)]",
+                cell.state == "flagged" &&
+                  "border-t-3 border-l-3 border-black/5 bg-stone-300/50 text-red-700",
+                cell.state == "shown" && "border-none",
               )}
               key={`${row}:${col}`}
               onClick={(e) => {
