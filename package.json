@@ -5,7 +5,7 @@
   "type": "module",
   "homepage": "https://karimmalidev.github.io/games",
   "scripts": {
-    "dev": "vite",
+    "dev": "vite --host 0.0.0.0 --port 3000",
     "build": "tsc -b && vite build",
     "lint": "eslint .",
     "preview": "vite preview",
@@ -17,6 +17,7 @@
     "clsx": "^2.1.1",
     "react": "^19.1.1",
     "react-dom": "^19.1.1",
+    "react-icons": "^5.5.0",
     "tailwindcss": "^4.1.17"
   },
   "devDependencies": {
