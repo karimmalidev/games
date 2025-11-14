@@ -21,6 +21,7 @@ export default function Minesweeper() {
     createBoard(BOARD_COLS, BOARD_ROWS),
   );
   const [remaining, setRemaining] = useLocalStorage("remaining", BOARD_MINES);
+  const [wins, setWins] = useLocalStorage("wins", 0);
 
   useEffect(() => {
     setRemaining(
@@ -46,13 +47,22 @@ export default function Minesweeper() {
   }
 
   function doRestartAction() {
+    if (board.state == "win") {
+      setWins((w) => w + 1);
+    }
     if (board.state != "fresh") {
       setBoard(createBoard(BOARD_COLS, BOARD_ROWS));
     }
   }
 
   return (
-    <Game status={[["Remaining", remaining]]} onRestart={doRestartAction}>
+    <Game
+      status={[
+        ["Wins", wins],
+        ["Remaining", remaining],
+      ]}
+      onRestart={doRestartAction}
+    >
       <div
         className="relative grid gap-[calc(clamp(2px,0.5vw,4px))] rounded-sm bg-stone-400 p-[calc(clamp(2px,0.5vw,4px))]"
         style={{ gridTemplateColumns: `repeat(${board.cols},1fr)` }}
