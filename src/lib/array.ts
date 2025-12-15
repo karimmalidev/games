@@ -7,3 +7,10 @@ export function createArray2D<T>(
     Array.from({ length: cols }, (_, c) => template(r, c)),
   );
 }
+
+export function createArray<T>(
+  length: number,
+  template: (i: number) => T,
+): T[] {
+  return Array.from({ length }, (_, i) => template(i));
+}
