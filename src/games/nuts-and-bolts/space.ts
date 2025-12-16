@@ -18,7 +18,8 @@ const BOLT_SIZE_MARGIN = 0.5;
 const LEVEL_EFFECTIVE_MAX = 100;
 
 function generateGameParams(level: number) {
-  const scale = Math.min(LEVEL_EFFECTIVE_MAX, level) / LEVEL_EFFECTIVE_MAX;
+  const scale =
+    (Math.min(LEVEL_EFFECTIVE_MAX, level) / LEVEL_EFFECTIVE_MAX) ** 0.6;
   const totalBolts = randParam(
     scale,
     TOTAL_BOLTS_MIN,
