@@ -46,7 +46,7 @@ export default function NutsAndBolts() {
           <div
             className="grid h-full w-full content-evenly justify-evenly *:justify-self-center"
             style={{
-              gridTemplateColumns: `repeat(${calcCellsPerRow(space)}, 1fr)`,
+              gridTemplateColumns: `repeat(${calcSpaceColumns(space)}, 1fr)`,
             }}
           >
             {space.bolts.map((bolt, index) => (
@@ -108,7 +108,7 @@ function BoltNode({
     <button
       style={{
         aspectRatio: 4 / 1 / (bolt.size + 0.5),
-        width: `${(calcCellsPerRow(space) / 5) * 75}%`,
+        width: `${(calcSpaceColumns(space) / 5) * 75}%`,
       }}
       className={cn(
         "relative flex flex-1/6 grow-0 flex-col justify-end duration-500",
@@ -220,10 +220,11 @@ function NutNode({
   );
 }
 
-function calcCellsPerRow(space: SpaceType) {
-  let cellsPerRow = Math.ceil(Math.sqrt(space.bolts.length));
-  if (space.bolts.length / cellsPerRow >= cellsPerRow) {
-    cellsPerRow++;
+function calcSpaceColumns(space: SpaceType) {
+  let columns = Math.ceil(Math.sqrt(space.bolts.length));
+  let rows = Math.ceil(space.bolts.length / columns);
+  if (rows >= columns) {
+    columns++;
   }
-  return cellsPerRow;
+  return columns;
 }
