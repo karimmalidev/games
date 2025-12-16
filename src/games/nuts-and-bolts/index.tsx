@@ -16,7 +16,6 @@ import {
   StarIcon,
   TriangleIcon,
   UndoIcon,
-  type LucideProps,
 } from "lucide-react";
 
 export default function NutsAndBolts() {

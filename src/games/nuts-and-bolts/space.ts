@@ -1,5 +1,5 @@
 import { createArray } from "../../lib/array";
-import { pick, randFloat, randParam, shuffle } from "../../lib/random";
+import { randParam, shuffle } from "../../lib/random";
 import {
   COLORS,
   type BoltType,
