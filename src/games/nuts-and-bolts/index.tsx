@@ -1,55 +1,73 @@
 import { cn } from "../../lib/utils";
 import { useLocalStorage } from "../../ui/hooks/use-local-storage";
 import Game from "../../ui/templates/game";
-import { clickBolt, generateSpace } from "./space";
+import { clickBolt, generateSpace, mergeSpaces } from "./space";
 import type { BoltType, NutType, SpaceType } from "./space-type";
 import "./styles.css";
 import Button from "../../ui/components/Button";
-import {
-  CheckIcon,
-  ChevronRightIcon,
-  Divide,
-  StarIcon,
-  UndoIcon,
-} from "lucide-react";
+import { ChevronRightIcon, StarIcon, UndoIcon } from "lucide-react";
 
 export default function NutsAndBolts() {
   const [level, setLevel] = useLocalStorage("level", 1);
-  const [space, setSpace] = useLocalStorage("space", generateSpace());
+  const [spaces, setSpaces] = useLocalStorage("spaces", [generateSpace(level)]);
+
+  const space = spaces[spaces.length - 1];
 
   function doRestartAction() {
-    setSpace(generateSpace());
+    if (spaces.length <= 1) {
+      return;
+    }
+    setSpaces([spaces[0]]);
   }
 
-  function doUndo() {}
+  function doUndo() {
+    if (spaces.length <= 1) {
+      return;
+    }
+    setSpaces(spaces.slice(0, spaces.length - 1));
+  }
+
+  function goToNextLevel() {
+    if (space.state != "complete") {
+      return;
+    }
+    setLevel(level + 1);
+    setSpaces([generateSpace(level + 1)]);
+  }
 
   return (
-    <Game status={[["Level", level]]} onRestart={doRestartAction}>
+    <Game
+      status={[["Level", level]]}
+      onRestart={doRestartAction}
+      disableRestart={spaces.length == 1 || space.state == "complete"}
+    >
       <div className="flex h-full w-full flex-col">
         <div className="relative flex flex-1 flex-wrap items-center justify-evenly rounded-sm bg-slate-700 p-8">
           {space.bolts.map((bolt, index) => (
             <BoltNode
               bolt={bolt}
-              space={space}
-              setSpace={setSpace}
+              spaces={spaces}
+              setSpaces={setSpaces}
               key={index}
             />
           ))}
-          {space.state == "complete" && (
-            <div className="absolute inset-0 flex items-end justify-end gap-1 p-4 text-4xl font-bold text-green-400 text-shadow-lg text-shadow-slate-700/50">
-              Solved!
-            </div>
-          )}
         </div>
         <div className="mt-4 px-4">
           {space.state == "playing" && (
-            <Button onClick={doUndo} className="w-fit">
+            <Button
+              onClick={doUndo}
+              className="w-fit"
+              disabled={spaces.length == 1}
+            >
               <UndoIcon />
               Undo
             </Button>
           )}
           {space.state == "complete" && (
-            <Button onClick={doUndo} className="ms-auto">
+            <Button
+              onClick={goToNextLevel}
+              className="w-full bg-green-600 hover:bg-green-600/80 active:bg-green-700"
+            >
               Next Level <ChevronRightIcon />
             </Button>
           )}
@@ -61,19 +79,22 @@ export default function NutsAndBolts() {
 
 function BoltNode({
   bolt,
-  space,
-  setSpace,
+  spaces,
+  setSpaces,
 }: {
   bolt: BoltType;
-  space: SpaceType;
-  setSpace: React.Dispatch<React.SetStateAction<SpaceType>>;
+  spaces: SpaceType[];
+  setSpaces: React.Dispatch<React.SetStateAction<SpaceType[]>>;
 }) {
+  const space = spaces[spaces.length - 1];
+
   function onClick() {
     if (space.state == "complete" || bolt.state == "complete") {
       return;
     }
+    const deepCopy = JSON.parse(JSON.stringify(spaces)) as SpaceType[];
     clickBolt(space, bolt);
-    setSpace((s) => ({ ...s }));
+    setSpaces([...deepCopy, space]);
   }
 
   return (
@@ -108,9 +129,9 @@ function BoltNode({
         <NutNode
           nut={nut}
           bolt={bolt}
+          spaces={spaces}
+          setSpaces={setSpaces}
           key={nut.id}
-          space={space}
-          setSpace={setSpace}
         />
       ))}
     </button>
@@ -123,8 +144,8 @@ function NutNode({
 }: {
   nut: NutType;
   bolt: BoltType;
-  space: SpaceType;
-  setSpace: React.Dispatch<React.SetStateAction<SpaceType>>;
+  spaces: SpaceType[];
+  setSpaces: React.Dispatch<React.SetStateAction<SpaceType[]>>;
 }) {
   const steps =
     bolt.size -

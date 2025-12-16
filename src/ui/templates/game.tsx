@@ -7,10 +7,12 @@ export default function Game({
   status,
   onRestart,
   children,
+  disableRestart,
 }: {
   status?: [string, string | number][];
   onRestart?: React.MouseEventHandler<HTMLButtonElement>;
   children?: JSX.Element;
+  disableRestart?: boolean;
 }) {
   const [game, setGame] = useGame();
 
@@ -42,7 +44,7 @@ export default function Game({
             </div>
           )}
         </div>
-        <Button onClick={onRestart} size="icon">
+        <Button onClick={onRestart} size="icon" disabled={disableRestart}>
           <RotateCcwIcon />
         </Button>
       </header>

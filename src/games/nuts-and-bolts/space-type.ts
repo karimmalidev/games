@@ -22,6 +22,7 @@ export type BoltType = {
 };
 
 export type SpaceType = {
+  step: number;
   state: "playing" | "complete";
   boltOnHold: BoltType | null;
   bolts: BoltType[];
