@@ -1,7 +1,7 @@
 import { cn } from "../../lib/utils";
 import { useLocalStorage } from "../../ui/hooks/use-local-storage";
 import Game from "../../ui/templates/game";
-import { clickBolt, generateSpace, mergeSpaces } from "./space";
+import { clickBolt, generateSpace, mergeSpace } from "./space";
 import type { BoltType, NutType, SpaceType } from "./space-type";
 import "./styles.css";
 import Button from "../../ui/components/Button";
@@ -94,7 +94,7 @@ function BoltNode({
     }
     const deepCopy = JSON.parse(JSON.stringify(spaces)) as SpaceType[];
     clickBolt(space, bolt);
-    setSpaces([...deepCopy, space]);
+    setSpaces(mergeSpace(deepCopy, space));
   }
 
   return (

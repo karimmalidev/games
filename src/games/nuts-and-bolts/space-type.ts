@@ -16,14 +16,15 @@ export type NutType = {
 };
 
 export type BoltType = {
+  id: number;
   state: "idle" | "hold" | "complete";
   size: number;
   nuts: NutType[];
 };
 
 export type SpaceType = {
-  step: number;
+  id: number;
   state: "playing" | "complete";
-  boltOnHold: BoltType | null;
+  boltOnHoldId: number | null;
   bolts: BoltType[];
 };

@@ -12,19 +12,20 @@ export function generateSpace(level: number): SpaceType {
   const requiredBolts = 2;
   const boltSize = 3;
 
+  let id = 0;
   const space: SpaceType = {
-    step: 0,
+    id: id++,
     state: "playing",
     bolts: createArray(totalBolts, () => ({
+      id: id++,
       nuts: [],
       size: boltSize,
       state: "idle",
     })),
-    boltOnHold: null,
+    boltOnHoldId: null,
   };
 
   const nuts: NutType[] = [];
-  let id = 1;
   for (let i = 0; i < requiredBolts; i++) {
     const color = pick(COLORS);
     nuts.push(
@@ -51,35 +52,36 @@ export function clickBolt(space: SpaceType, clickedBolt: BoltType) {
     return;
   }
 
-  if (!space.boltOnHold) {
+  if (space.boltOnHoldId == null) {
     if (clickedBolt.nuts.length == 0) {
       return;
     }
-    space.boltOnHold = clickedBolt;
+    space.boltOnHoldId = clickedBolt.id;
     makeBoltHold(clickedBolt);
     return;
   }
 
-  const nutsOnHold = space.boltOnHold.nuts.filter((nut) => nut.state == "hold");
+  const boltOnHold = space.bolts.find(({ id }) => id == space.boltOnHoldId)!;
+  const nutsOnHold = boltOnHold.nuts.filter((nut) => nut.state == "hold");
   const colorOnHold = nutsOnHold[0].color;
   const colorClicked = clickedBolt.nuts[0]?.color;
 
   if (colorClicked && colorClicked != colorOnHold) {
-    makeBoltIdle(space.boltOnHold);
-    space.boltOnHold = null;
+    makeBoltIdle(boltOnHold);
+    space.boltOnHoldId = null;
     return;
   }
 
   const availableSpace = clickedBolt.size - clickedBolt.nuts.length;
   const nutsToBeMoved = nutsOnHold.slice(0, availableSpace);
   clickedBolt.nuts.unshift(...nutsToBeMoved);
-  space.boltOnHold.nuts.splice(0, nutsToBeMoved.length);
+  boltOnHold.nuts.splice(0, nutsToBeMoved.length);
   makeBoltIdle(clickedBolt);
-  makeBoltIdle(space.boltOnHold);
-  if (space.boltOnHold != clickedBolt) {
-    space.step += 1;
+  makeBoltIdle(boltOnHold);
+  if (boltOnHold.id != clickedBolt.id) {
+    space.id += 1;
   }
-  space.boltOnHold = null;
+  space.boltOnHoldId = null;
   if (shouldBeComplete(clickedBolt)) {
     clickedBolt.state = "complete";
     if (
@@ -150,9 +152,22 @@ function equals(a: SpaceType, b: SpaceType) {
 }
 
 function makeSpaceIdle(space: SpaceType) {
-  if (!space.boltOnHold) {
+  if (space.boltOnHoldId == null) {
     return;
   }
-  makeBoltIdle(space.boltOnHold);
-  space.boltOnHold = null;
+  const boltOnHold = space.bolts.find(({ id }) => id == space.boltOnHoldId)!;
+  makeBoltIdle(boltOnHold);
+  space.boltOnHoldId = null;
+}
+
+export function mergeSpace(
+  history: SpaceType[],
+  space: SpaceType,
+): SpaceType[] {
+  const last = history.pop();
+  if (last && last.id != space.id) {
+    makeSpaceIdle(last);
+    return [...history, last, space];
+  }
+  return [...history, space];
 }
