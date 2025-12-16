@@ -119,10 +119,9 @@ function BoltNode({
     <button
       style={{
         aspectRatio: 4 / 1 / (bolt.size + 0.5),
-        width: `${(calcSpaceColumns(space) / 5) * 75}%`,
       }}
       className={cn(
-        "relative flex flex-1/6 grow-0 flex-col justify-end duration-500",
+        "relative flex w-8/10 flex-1/6 grow-0 flex-col justify-end duration-500",
         space.state != "complete" &&
           bolt.state != "complete" &&
           "hover:cursor-pointer",
@@ -245,7 +244,7 @@ function NutNode({
 function calcSpaceColumns(space: SpaceType) {
   let columns = Math.ceil(Math.sqrt(space.bolts.length));
   let rows = Math.ceil(space.bolts.length / columns);
-  if (rows >= columns) {
+  if (rows >= columns && columns >= 3) {
     columns++;
   }
   return columns;
