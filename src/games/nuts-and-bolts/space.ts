@@ -1,32 +1,34 @@
 import { createArray } from "../../lib/array";
 import { pick, shuffle } from "../../lib/random";
-import { COLORS, type Color, type Space } from "./space-type";
+import { COLORS, type NutType, type SpaceType } from "./space-type";
 
-export function generateSpace(): Space {
-  const totalNuts = 12;
-  const requiredNuts = 10;
-  const nutSize = 5;
+export function generateSpace(): SpaceType {
+  const totalBolts = 12;
+  const requiredBolts = 10;
+  const boltSize = 5;
 
-  const space: Space = {
+  const space: SpaceType = {
     state: "playing",
-    nuts: createArray(totalNuts, () => ({
-      colors: [],
-      size: nutSize,
+    bolts: createArray(totalBolts, () => ({
+      nuts: [],
+      size: boltSize,
       state: "idle",
     })),
   };
 
-  const colors: Color[] = [];
-  for (let i = 0; i < requiredNuts; i++) {
+  const nuts: NutType[] = [];
+  for (let i = 0; i < requiredBolts; i++) {
     const color = pick(COLORS);
-    colors.push(...createArray(nutSize, () => color));
+    nuts.push(
+      ...createArray<NutType>(boltSize, () => ({ color, state: "idle" })),
+    );
   }
-  shuffle(colors);
+  shuffle(nuts);
 
   let i = 0;
-  for (const nut of space.nuts.slice(0, requiredNuts)) {
-    nut.colors.push(...colors.slice(i, i + nutSize));
-    i += nutSize;
+  for (const bolt of space.bolts.slice(0, requiredBolts)) {
+    bolt.nuts.push(...nuts.slice(i, i + boltSize));
+    i += boltSize;
   }
 
   return space;

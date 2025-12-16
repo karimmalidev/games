@@ -9,15 +9,18 @@ export const COLORS = [
   "black",
 ] as const;
 
-export type Color = (typeof COLORS)[number];
-
-export type Nut = {
-  state: "idle" | "hold" | "complete";
-  size: number;
-  colors: Color[];
+export type NutType = {
+  state: "idle" | "hold";
+  color: (typeof COLORS)[number];
 };
 
-export type Space = {
+export type BoltType = {
+  state: "idle" | "hold" | "complete";
+  size: number;
+  nuts: NutType[];
+};
+
+export type SpaceType = {
   state: "playing" | "win";
-  nuts: Nut[];
+  bolts: BoltType[];
 };
