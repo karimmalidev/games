@@ -168,7 +168,7 @@ function NutNode({
           nut.color == "blue" && "text-blue-500",
           nut.color == "cyan" && "text-cyan-500",
           nut.color == "white" && "text-neutral-300",
-          nut.color == "black" && "text-neutral-700",
+          nut.color == "black" && "text-neutral-600",
         )}
       >
         <div
@@ -181,7 +181,7 @@ function NutNode({
             nut.color == "blue" && "bg-blue-400",
             nut.color == "cyan" && "bg-cyan-400",
             nut.color == "white" && "bg-neutral-200",
-            nut.color == "black" && "bg-neutral-600",
+            nut.color == "black" && "bg-neutral-500",
           )}
         ></div>
         <div
@@ -194,7 +194,7 @@ function NutNode({
             nut.color == "blue" && "bg-blue-300",
             nut.color == "cyan" && "bg-cyan-300",
             nut.color == "white" && "bg-neutral-100",
-            nut.color == "black" && "bg-neutral-500",
+            nut.color == "black" && "bg-neutral-400",
           )}
         ></div>
         <div
@@ -207,7 +207,7 @@ function NutNode({
             nut.color == "blue" && "bg-blue-600",
             nut.color == "cyan" && "bg-cyan-600",
             nut.color == "white" && "bg-neutral-400",
-            nut.color == "black" && "bg-neutral-900",
+            nut.color == "black" && "bg-neutral-700",
           )}
         ></div>
 
