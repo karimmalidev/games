@@ -42,15 +42,22 @@ export default function NutsAndBolts() {
       disableRestart={spaces.length == 1 || space.state == "complete"}
     >
       <div className="flex h-full w-full flex-col">
-        <div className="relative flex flex-1 flex-wrap items-center justify-evenly rounded-sm bg-slate-700 p-8">
-          {space.bolts.map((bolt, index) => (
-            <BoltNode
-              bolt={bolt}
-              spaces={spaces}
-              setSpaces={setSpaces}
-              key={index}
-            />
-          ))}
+        <div className="relative flex h-full flex-1 items-center justify-center rounded-sm bg-slate-700">
+          <div
+            className="grid h-full w-full content-evenly justify-evenly *:justify-self-center"
+            style={{
+              gridTemplateColumns: `repeat(${calcCellsPerRow(space)}, 1fr)`,
+            }}
+          >
+            {space.bolts.map((bolt, index) => (
+              <BoltNode
+                bolt={bolt}
+                spaces={spaces}
+                setSpaces={setSpaces}
+                key={index}
+              />
+            ))}
+          </div>
         </div>
         <div className="mt-4 px-4">
           {space.state == "playing" && (
@@ -99,7 +106,10 @@ function BoltNode({
 
   return (
     <button
-      style={{ aspectRatio: 4 / 1 / (bolt.size + 0.5) }}
+      style={{
+        aspectRatio: 4 / 1 / (bolt.size + 0.5),
+        width: `${(calcCellsPerRow(space) / 5) * 75}%`,
+      }}
       className={cn(
         "relative flex flex-1/6 grow-0 flex-col justify-end duration-500",
         space.state != "complete" &&
@@ -126,13 +136,7 @@ function BoltNode({
       )}
 
       {bolt.nuts.map((nut) => (
-        <NutNode
-          nut={nut}
-          bolt={bolt}
-          spaces={spaces}
-          setSpaces={setSpaces}
-          key={nut.id}
-        />
+        <NutNode nut={nut} spaces={spaces} setSpaces={setSpaces} key={nut.id} />
       ))}
     </button>
   );
@@ -140,32 +144,22 @@ function BoltNode({
 
 function NutNode({
   nut,
-  bolt,
 }: {
   nut: NutType;
-  bolt: BoltType;
   spaces: SpaceType[];
   setSpaces: React.Dispatch<React.SetStateAction<SpaceType[]>>;
 }) {
-  const steps =
-    bolt.size -
-    bolt.nuts.length +
-    bolt.nuts.filter((nut) => nut.state == "hold").length +
-    1;
   return (
     <div
-      style={{
-        transform: `translateY(${nut.state == "hold" ? -100 * steps : 0}%)`,
-      }}
       className={cn(
         "duration-400 ease-in",
-        bolt.state == "hold" && "duration-200 ease-linear",
+        nut.state == "hold" && "-translate-y-1/1 duration-200 ease-linear",
       )}
     >
       <div
         className={cn(
           "relative z-1 mx-auto aspect-3/1 w-3/4 rounded-sm border-t border-b border-black/10 bg-current",
-          "*:border-bg *:absolute *:h-full *:rounded-sm *:border *:border-current *:bg-transparent",
+          "*:absolute *:h-full *:rounded-sm *:border *:border-current",
           nut.state == "hold" && "animate-[wiggle_2s_ease-in-out_infinite]",
           nut.color == "red" && "text-red-500",
           nut.color == "yellow" && "text-yellow-500",
@@ -177,9 +171,45 @@ function NutNode({
           nut.color == "black" && "text-neutral-700",
         )}
       >
-        <div className="left-0 w-1/4 backdrop-brightness-110"></div>
-        <div className="left-1/2 w-1/2 -translate-x-1/2 backdrop-brightness-120"></div>
-        <div className="left-3/4 w-1/4 backdrop-brightness-90"></div>
+        <div
+          className={cn(
+            "left-0 w-1/4",
+            nut.color == "red" && "bg-red-400",
+            nut.color == "yellow" && "bg-yellow-400",
+            nut.color == "green" && "bg-green-400",
+            nut.color == "fuchsia" && "bg-fuchsia-400",
+            nut.color == "blue" && "bg-blue-400",
+            nut.color == "cyan" && "bg-cyan-400",
+            nut.color == "white" && "bg-neutral-200",
+            nut.color == "black" && "bg-neutral-600",
+          )}
+        ></div>
+        <div
+          className={cn(
+            "left-1/2 w-1/2 -translate-x-1/2",
+            nut.color == "red" && "bg-red-300",
+            nut.color == "yellow" && "bg-yellow-300",
+            nut.color == "green" && "bg-green-300",
+            nut.color == "fuchsia" && "bg-fuchsia-300",
+            nut.color == "blue" && "bg-blue-300",
+            nut.color == "cyan" && "bg-cyan-300",
+            nut.color == "white" && "bg-neutral-100",
+            nut.color == "black" && "bg-neutral-500",
+          )}
+        ></div>
+        <div
+          className={cn(
+            "left-3/4 w-1/4",
+            nut.color == "red" && "bg-red-600",
+            nut.color == "yellow" && "bg-yellow-600",
+            nut.color == "green" && "bg-green-600",
+            nut.color == "fuchsia" && "bg-fuchsia-600",
+            nut.color == "blue" && "bg-blue-600",
+            nut.color == "cyan" && "bg-cyan-600",
+            nut.color == "white" && "bg-neutral-400",
+            nut.color == "black" && "bg-neutral-900",
+          )}
+        ></div>
 
         <StarIcon
           className="absolute top-1/2 left-1/2 size-3/4! -translate-x-1/2 -translate-y-1/2 border-none opacity-50"
@@ -188,4 +218,12 @@ function NutNode({
       </div>
     </div>
   );
+}
+
+function calcCellsPerRow(space: SpaceType) {
+  let cellsPerRow = Math.ceil(Math.sqrt(space.bolts.length));
+  if (space.bolts.length / cellsPerRow >= cellsPerRow) {
+    cellsPerRow++;
+  }
+  return cellsPerRow;
 }

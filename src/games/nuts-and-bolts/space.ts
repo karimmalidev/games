@@ -1,5 +1,5 @@
 import { createArray } from "../../lib/array";
-import { pick, shuffle } from "../../lib/random";
+import { pick, randFloat, randParam, shuffle } from "../../lib/random";
 import {
   COLORS,
   type BoltType,
@@ -7,10 +7,40 @@ import {
   type SpaceType,
 } from "./space-type";
 
+const TOTAL_BOLTS_MIN = 3;
+const TOTAL_BOLTS_MAX = 15;
+const TOTAL_BLOTS_MARGIN = 0.5;
+
+const BOLT_SIZE_MIN = 3;
+const BOLT_SIZE_MAX = 7;
+const BOLT_SIZE_MARGIN = 0.5;
+
+const LEVEL_EFFECTIVE_MAX = 100;
+
+function generateGameParams(level: number) {
+  const scale = Math.min(LEVEL_EFFECTIVE_MAX, level) / LEVEL_EFFECTIVE_MAX;
+  const totalBolts = randParam(
+    scale,
+    TOTAL_BOLTS_MIN,
+    TOTAL_BOLTS_MAX,
+    TOTAL_BLOTS_MARGIN,
+  );
+  const requiredBolts = totalBolts - (totalBolts > 4 ? 2 : 1);
+  const boltSize = randParam(
+    scale,
+    BOLT_SIZE_MIN,
+    BOLT_SIZE_MAX,
+    BOLT_SIZE_MARGIN,
+  );
+  return {
+    totalBolts,
+    requiredBolts,
+    boltSize,
+  };
+}
+
 export function generateSpace(level: number): SpaceType {
-  const totalBolts = 3;
-  const requiredBolts = 2;
-  const boltSize = 3;
+  const { totalBolts, requiredBolts, boltSize } = generateGameParams(level);
 
   let id = 0;
   const space: SpaceType = {

@@ -1,9 +1,25 @@
-export function genRandInt(min: number, max: number): number {
+export function randInt(min: number, max: number): number {
   return Math.floor(Math.random() * (max - min)) + min;
 }
 
+export function randFloat(min: number, max: number): number {
+  return Math.random() * (max - min) + min;
+}
+
+export function randParam(
+  scale: number,
+  min: number,
+  max: number,
+  margin: number,
+) {
+  const x = Math.floor(
+    min + (max - min) * scale * (1 + randFloat(-margin, margin)),
+  );
+  return Math.max(min, Math.min(max, x));
+}
+
 export function pick<T>(array: readonly T[]) {
-  return array[genRandInt(0, array.length - 1)];
+  return array[randInt(0, array.length - 1)];
 }
 
 export function shuffle<T>(array: T[]): T[] {
