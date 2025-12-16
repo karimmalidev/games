@@ -119,9 +119,10 @@ function BoltNode({
     <button
       style={{
         aspectRatio: 4 / 1 / (bolt.size + 0.5),
+        width: `${(calcSpaceColumns(space) / 5) * 80}%`,
       }}
       className={cn(
-        "relative flex w-8/10 flex-1/6 grow-0 flex-col justify-end duration-500",
+        "relative flex flex-1/6 grow-0 flex-col justify-end duration-500",
         space.state != "complete" &&
           bolt.state != "complete" &&
           "hover:cursor-pointer",
@@ -146,7 +147,13 @@ function BoltNode({
       )}
 
       {bolt.nuts.map((nut) => (
-        <NutNode nut={nut} spaces={spaces} setSpaces={setSpaces} key={nut.id} />
+        <NutNode
+          nut={nut}
+          bolt={bolt}
+          spaces={spaces}
+          setSpaces={setSpaces}
+          key={nut.id}
+        />
       ))}
     </button>
   );
@@ -154,8 +161,10 @@ function BoltNode({
 
 function NutNode({
   nut,
+  bolt,
 }: {
   nut: NutType;
+  bolt: BoltType;
   spaces: SpaceType[];
   setSpaces: React.Dispatch<React.SetStateAction<SpaceType[]>>;
 }) {
@@ -170,11 +179,16 @@ function NutNode({
     white: OctagonIcon,
   }[nut.color];
 
+  const steps = 1 + (bolt.size - bolt.nuts.length);
+
   return (
     <div
+      style={{
+        transform: `translateY(${nut.state == "hold" ? -100 * steps : 0}%)`,
+      }}
       className={cn(
         "duration-400 ease-in",
-        nut.state == "hold" && "-translate-y-1/1 duration-200 ease-linear",
+        nut.state == "hold" && "duration-200 ease-linear",
       )}
     >
       <div
