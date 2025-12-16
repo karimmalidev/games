@@ -4,6 +4,7 @@ import Game from "../../ui/templates/game";
 import { clickBolt, generateSpace } from "./space";
 import type { BoltType, NutType, SpaceType } from "./space-type";
 import "./styles.css";
+import { TbLetterK } from "react-icons/tb";
 
 export default function NutsAndBolts() {
   const [level, setLevel] = useLocalStorage("level", 1);
@@ -57,8 +58,14 @@ function BoltNode({
         <div className="absolute inset-0 left-3/4 w-1/4 rounded-sm bg-black/3"></div>
       </div>
 
-      {bolt.nuts.map((nut, index) => (
-        <NutNode nut={nut} key={index} space={space} setSpace={setSpace} />
+      {bolt.nuts.map((nut) => (
+        <NutNode
+          nut={nut}
+          bolt={bolt}
+          key={nut.id}
+          space={space}
+          setSpace={setSpace}
+        />
       ))}
     </button>
   );
@@ -66,31 +73,49 @@ function BoltNode({
 
 function NutNode({
   nut,
+  bolt,
 }: {
   nut: NutType;
+  bolt: BoltType;
   space: SpaceType;
   setSpace: React.Dispatch<React.SetStateAction<SpaceType>>;
 }) {
+  const steps =
+    bolt.size -
+    bolt.nuts.length +
+    bolt.nuts.filter((nut) => nut.state == "hold").length +
+    1;
   return (
     <div
+      style={{
+        transform: `translateY(${nut.state == "hold" ? -100 * steps : 0}%)`,
+      }}
       className={cn(
-        "*:border-bg relative z-1 mx-auto aspect-3/1 w-3/4 rounded-sm bg-current *:border *:border-current",
-        nut.state == "hold" &&
-          "-translate-y-1/1 animate-[wiggle_2s_ease-in-out_infinite]",
-        "border-t border-b border-black/10",
-        nut.color == "red" && "text-red-500",
-        nut.color == "yellow" && "text-yellow-500",
-        nut.color == "green" && "text-green-500",
-        nut.color == "fuchsia" && "text-fuchsia-500",
-        nut.color == "blue" && "text-blue-500",
-        nut.color == "cyan" && "text-cyan-500",
-        nut.color == "white" && "text-neutral-300",
-        nut.color == "black" && "text-neutral-700",
+        "duration-400 ease-in",
+        bolt.state == "hold" && "duration-200 ease-linear",
       )}
     >
-      <div className="absolute left-0 h-full w-1/4 rounded-sm backdrop-brightness-110"></div>
-      <div className="absolute left-1/2 h-full w-1/2 -translate-x-1/2 rounded-sm backdrop-brightness-120"></div>
-      <div className="absolute left-3/4 h-full w-1/4 rounded-sm backdrop-brightness-95"></div>
+      <div
+        className={cn(
+          "relative z-1 mx-auto aspect-3/1 w-3/4 rounded-sm border-t border-b border-black/10 bg-current",
+          "*:border-bg *:absolute *:h-full *:rounded-sm *:border *:border-current *:bg-transparent",
+          nut.state == "hold" && "animate-[wiggle_2s_ease-in-out_infinite]",
+          nut.color == "red" && "text-red-500",
+          nut.color == "yellow" && "text-yellow-500",
+          nut.color == "green" && "text-green-500",
+          nut.color == "fuchsia" && "text-fuchsia-500",
+          nut.color == "blue" && "text-blue-500",
+          nut.color == "cyan" && "text-cyan-500",
+          nut.color == "white" && "text-neutral-300",
+          nut.color == "black" && "text-neutral-700",
+        )}
+      >
+        <div className="left-0 w-1/4 backdrop-brightness-110"></div>
+        <div className="left-1/2 w-1/2 -translate-x-1/2 backdrop-brightness-120"></div>
+        <div className="left-3/4 w-1/4 backdrop-brightness-90"></div>
+
+        <TbLetterK className="absolute top-1/2 left-1/2 size-3/4! -translate-x-1/2 -translate-y-1/2 border-none stroke-5 opacity-50" />
+      </div>
     </div>
   );
 }

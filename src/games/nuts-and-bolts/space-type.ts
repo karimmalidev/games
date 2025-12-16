@@ -10,6 +10,7 @@ export const COLORS = [
 ] as const;
 
 export type NutType = {
+  id: number;
   state: "idle" | "hold";
   color: (typeof COLORS)[number];
 };

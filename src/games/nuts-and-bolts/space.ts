@@ -23,10 +23,15 @@ export function generateSpace(): SpaceType {
   };
 
   const nuts: NutType[] = [];
+  let id = 1;
   for (let i = 0; i < requiredBolts; i++) {
     const color = pick(COLORS);
     nuts.push(
-      ...createArray<NutType>(boltSize, () => ({ color, state: "idle" })),
+      ...createArray<NutType>(boltSize, () => ({
+        color,
+        state: "idle",
+        id: id++,
+      })),
     );
   }
   shuffle(nuts);
@@ -40,18 +45,48 @@ export function generateSpace(): SpaceType {
   return space;
 }
 
-export function clickBolt(space: SpaceType, bolt: BoltType) {
-  if (space.state != "playing") {
+export function clickBolt(space: SpaceType, clickedBolt: BoltType) {
+  if (space.state != "playing" || clickedBolt.state == "complete") {
     return;
   }
 
-  if (space.boltOnHold == bolt) {
-    space.boltOnHold = null;
-    makeBoltIdle(bolt);
-  } else {
-    space.boltOnHold = bolt;
-    makeBoltHold(bolt);
+  if (!space.boltOnHold) {
+    if (clickedBolt.nuts.length == 0) {
+      return;
+    }
+    space.boltOnHold = clickedBolt;
+    makeBoltHold(clickedBolt);
+    return;
   }
+
+  const nutsOnHold = space.boltOnHold.nuts.filter((nut) => nut.state == "hold");
+  const colorOnHold = nutsOnHold[0].color;
+  const colorClicked = clickedBolt.nuts[0]?.color;
+
+  if (colorClicked && colorClicked != colorOnHold) {
+    makeBoltIdle(space.boltOnHold);
+    space.boltOnHold = null;
+    return;
+  }
+
+  const availableSpace = clickedBolt.size - clickedBolt.nuts.length;
+  const nutsToBeMoved = nutsOnHold.slice(0, availableSpace);
+  clickedBolt.nuts.unshift(...nutsToBeMoved);
+  space.boltOnHold.nuts.splice(0, nutsToBeMoved.length);
+  makeBoltIdle(clickedBolt);
+  makeBoltIdle(space.boltOnHold);
+  space.boltOnHold = null;
+  markAsCompleteIfEligible(clickedBolt);
+}
+
+function markAsCompleteIfEligible(bolt: BoltType) {
+  if (
+    bolt.nuts.length != bolt.size ||
+    !bolt.nuts.every((nut) => nut.color == bolt.nuts[0].color)
+  ) {
+    return;
+  }
+  bolt.state = "complete";
 }
 
 function makeBoltIdle(bolt: BoltType) {
