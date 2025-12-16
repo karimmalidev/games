@@ -8,9 +8,9 @@ import {
 } from "./space-type";
 
 export function generateSpace(): SpaceType {
-  const totalBolts = 12;
-  const requiredBolts = 10;
-  const boltSize = 5;
+  const totalBolts = 3;
+  const requiredBolts = 2;
+  const boltSize = 3;
 
   const space: SpaceType = {
     state: "playing",
@@ -76,17 +76,27 @@ export function clickBolt(space: SpaceType, clickedBolt: BoltType) {
   makeBoltIdle(clickedBolt);
   makeBoltIdle(space.boltOnHold);
   space.boltOnHold = null;
-  markAsCompleteIfEligible(clickedBolt);
+  if (shouldBeComplete(clickedBolt)) {
+    clickedBolt.state = "complete";
+    if (
+      space.bolts.every(
+        (bolt) => bolt.nuts.length == 0 || bolt.state == "complete",
+      )
+    ) {
+      space.state = "complete";
+    }
+  }
 }
 
-function markAsCompleteIfEligible(bolt: BoltType) {
+function shouldBeComplete(bolt: BoltType) {
+  const c = bolt.nuts[0].color;
   if (
-    bolt.nuts.length != bolt.size ||
-    !bolt.nuts.every((nut) => nut.color == bolt.nuts[0].color)
+    bolt.nuts.length == bolt.size &&
+    bolt.nuts.every((nut) => nut.color == c)
   ) {
-    return;
+    return true;
   }
-  bolt.state = "complete";
+  return false;
 }
 
 function makeBoltIdle(bolt: BoltType) {

@@ -24,7 +24,8 @@ export default function Home() {
         <div className="mx-8 mb-16 flex flex-col">
           {games.map((game) => (
             <div className="h-20" key={game.id}>
-              <Button onClick={() => setGame(game)} Icon={game.Icon}>
+              <Button onClick={() => setGame(game)} className="w-full">
+                <game.Icon />
                 {game.name}
               </Button>
             </div>

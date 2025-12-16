@@ -4,7 +4,14 @@ import Game from "../../ui/templates/game";
 import { clickBolt, generateSpace } from "./space";
 import type { BoltType, NutType, SpaceType } from "./space-type";
 import "./styles.css";
-import { TbLetterK } from "react-icons/tb";
+import Button from "../../ui/components/Button";
+import {
+  CheckIcon,
+  ChevronRightIcon,
+  Divide,
+  StarIcon,
+  UndoIcon,
+} from "lucide-react";
 
 export default function NutsAndBolts() {
   const [level, setLevel] = useLocalStorage("level", 1);
@@ -14,12 +21,39 @@ export default function NutsAndBolts() {
     setSpace(generateSpace());
   }
 
+  function doUndo() {}
+
   return (
     <Game status={[["Level", level]]} onRestart={doRestartAction}>
-      <div className="flex h-full w-full flex-wrap items-center justify-evenly gap-x-4 rounded-sm bg-slate-700 p-8">
-        {space.bolts.map((bolt, index) => (
-          <BoltNode bolt={bolt} space={space} setSpace={setSpace} key={index} />
-        ))}
+      <div className="flex h-full w-full flex-col">
+        <div className="relative flex flex-1 flex-wrap items-center justify-evenly rounded-sm bg-slate-700 p-8">
+          {space.bolts.map((bolt, index) => (
+            <BoltNode
+              bolt={bolt}
+              space={space}
+              setSpace={setSpace}
+              key={index}
+            />
+          ))}
+          {space.state == "complete" && (
+            <div className="absolute inset-0 flex items-end justify-end gap-1 p-4 text-4xl font-bold text-green-400 text-shadow-lg text-shadow-slate-700/50">
+              Solved!
+            </div>
+          )}
+        </div>
+        <div className="mt-4 px-4">
+          {space.state == "playing" && (
+            <Button onClick={doUndo} className="w-fit">
+              <UndoIcon />
+              Undo
+            </Button>
+          )}
+          {space.state == "complete" && (
+            <Button onClick={doUndo} className="ms-auto">
+              Next Level <ChevronRightIcon />
+            </Button>
+          )}
+        </div>
       </div>
     </Game>
   );
@@ -35,6 +69,9 @@ function BoltNode({
   setSpace: React.Dispatch<React.SetStateAction<SpaceType>>;
 }) {
   function onClick() {
+    if (space.state == "complete" || bolt.state == "complete") {
+      return;
+    }
     clickBolt(space, bolt);
     setSpace((s) => ({ ...s }));
   }
@@ -43,8 +80,10 @@ function BoltNode({
     <button
       style={{ aspectRatio: 4 / 1 / (bolt.size + 0.5) }}
       className={cn(
-        "relative flex flex-1/6 grow-0 flex-col justify-end",
-        bolt.state != "complete" && "hover:cursor-pointer",
+        "relative flex flex-1/6 grow-0 flex-col justify-end duration-500",
+        space.state != "complete" &&
+          bolt.state != "complete" &&
+          "hover:cursor-pointer",
       )}
       onClick={onClick}
     >
@@ -57,6 +96,13 @@ function BoltNode({
         <div className="absolute inset-0 left-1/4 w-2/4 rounded-sm bg-white/6"></div>
         <div className="absolute inset-0 left-3/4 w-1/4 rounded-sm bg-black/3"></div>
       </div>
+
+      {/* complete bolt */}
+      {bolt.state == "complete" && (
+        <div className="absolute inset-0 left-1/2 aspect-4/1 w-1/2 -translate-x-1/2 rounded-tl-full rounded-tr-full border-r-2 border-b-2 border-l-2 border-black/10 bg-slate-500">
+          <div className="absolute inset-0 top-0 left-1/2 aspect-8/1 w-1/2 -translate-x-1/2 rounded-br-full rounded-bl-full bg-black/10"></div>
+        </div>
+      )}
 
       {bolt.nuts.map((nut) => (
         <NutNode
@@ -114,7 +160,10 @@ function NutNode({
         <div className="left-1/2 w-1/2 -translate-x-1/2 backdrop-brightness-120"></div>
         <div className="left-3/4 w-1/4 backdrop-brightness-90"></div>
 
-        <TbLetterK className="absolute top-1/2 left-1/2 size-3/4! -translate-x-1/2 -translate-y-1/2 border-none stroke-5 opacity-50" />
+        <StarIcon
+          className="absolute top-1/2 left-1/2 size-3/4! -translate-x-1/2 -translate-y-1/2 border-none opacity-50"
+          strokeWidth="3px"
+        />
       </div>
     </div>
   );

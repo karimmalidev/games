@@ -1,9 +1,11 @@
+import type { LucideProps } from "lucide-react";
 import type { JSX } from "react";
-import type { IconType } from "react-icons";
 
 export type GameType = {
   id: string;
   name: string;
-  Icon: IconType;
+  Icon: React.ForwardRefExoticComponent<
+    Omit<LucideProps, "ref"> & React.RefAttributes<SVGSVGElement>
+  >;
   Node: () => JSX.Element;
 };

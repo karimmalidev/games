@@ -1,4 +1,3 @@
-import { PiBombFill, PiFlagPennantFill } from "react-icons/pi";
 import {
   createBoard,
   getRemainingMinesCount,
@@ -10,6 +9,7 @@ import clsx from "clsx";
 import Game from "../../ui/templates/game";
 import { useLocalStorage } from "../../ui/hooks/use-local-storage";
 import { useEffect } from "react";
+import { BombIcon, FlagTriangleRightIcon } from "lucide-react";
 
 const BOARD_COLS = 10;
 const BOARD_ROWS = 15;
@@ -121,15 +121,13 @@ export default function Minesweeper() {
               }}
             >
               <span className="text-[calc(clamp(24px,6vw,32px))] font-bold">
-                {cell.state == "shown" && cell.value == "mine" && (
-                  <PiBombFill />
-                )}
+                {cell.state == "shown" && cell.value == "mine" && <BombIcon />}
                 {cell.state == "shown" &&
                   typeof cell.value == "number" &&
                   cell.value > 0 &&
                   cell.value}
                 {cell.state == "flagged" && (
-                  <PiFlagPennantFill className="text-[0.8em]" />
+                  <FlagTriangleRightIcon className="text-[0.8em]" />
                 )}
               </span>
             </button>

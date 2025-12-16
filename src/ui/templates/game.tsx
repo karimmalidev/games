@@ -1,8 +1,7 @@
-import { IoCaretBack } from "react-icons/io5";
 import Button from "../components/Button";
-import { VscDebugRestart } from "react-icons/vsc";
 import type { JSX } from "react";
 import { useGame } from "../views/router";
+import { ChevronLeftIcon, RotateCcwIcon } from "lucide-react";
 
 export default function Game({
   status,
@@ -18,7 +17,9 @@ export default function Game({
   return (
     <div className="flex min-h-dvh w-full flex-col select-none">
       <header className="container mx-auto flex h-20 w-full max-w-xl items-center justify-between gap-4 px-4">
-        <Button onClick={() => setGame(null)} Icon={IoCaretBack} />
+        <Button onClick={() => setGame(null)} size="icon">
+          <ChevronLeftIcon />
+        </Button>
         <div className="flex grow items-center justify-evenly">
           {status &&
             status.map(([name, value], index) => (
@@ -41,7 +42,9 @@ export default function Game({
             </div>
           )}
         </div>
-        <Button onClick={onRestart} Icon={VscDebugRestart} />
+        <Button onClick={onRestart} size="icon">
+          <RotateCcwIcon />
+        </Button>
       </header>
 
       <main className="mx-auto aspect-2/3 w-full max-w-xl">{children}</main>
