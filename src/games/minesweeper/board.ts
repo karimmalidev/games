@@ -51,7 +51,9 @@ export function sweep(board: BoardType, row: number, col: number) {
   if (cell.value == "mine") {
     board.state = "lose";
     board.cells.flat().forEach((cell) => {
-      cell.state = "shown";
+      if (cell.value == "mine") {
+        cell.state = "shown";
+      }
     });
     return;
   }

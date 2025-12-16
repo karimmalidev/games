@@ -9,7 +9,7 @@ import clsx from "clsx";
 import Game from "../../ui/templates/game";
 import { useLocalStorage } from "../../ui/hooks/use-local-storage";
 import { useEffect } from "react";
-import { BombIcon, FlagTriangleRightIcon } from "lucide-react";
+import { BombIcon, FlagTriangleLeftIcon } from "lucide-react";
 
 const BOARD_COLS = 10;
 const BOARD_ROWS = 15;
@@ -121,13 +121,23 @@ export default function Minesweeper() {
               }}
             >
               <span className="text-[calc(clamp(24px,6vw,32px))] font-bold">
-                {cell.state == "shown" && cell.value == "mine" && <BombIcon />}
+                {cell.state == "shown" && cell.value == "mine" && (
+                  <BombIcon
+                    className="size-[1em]"
+                    fill="currentColor"
+                    fillOpacity={0.5}
+                  />
+                )}
                 {cell.state == "shown" &&
                   typeof cell.value == "number" &&
                   cell.value > 0 &&
                   cell.value}
                 {cell.state == "flagged" && (
-                  <FlagTriangleRightIcon className="text-[0.8em]" />
+                  <FlagTriangleLeftIcon
+                    className="size-[0.9em]"
+                    fill="currentColor"
+                    fillOpacity={0.5}
+                  />
                 )}
               </span>
             </button>
