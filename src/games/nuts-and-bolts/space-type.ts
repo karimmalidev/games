@@ -1,12 +1,12 @@
 export const COLORS = [
   "red",
-  "yellow",
-  "green",
-  "fuchsia",
   "blue",
-  "cyan",
-  "white",
+  "green",
+  "yellow",
   "black",
+  "white",
+  "cyan",
+  "fuchsia",
 ] as const;
 
 export type NutType = {

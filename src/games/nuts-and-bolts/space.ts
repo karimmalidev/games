@@ -57,12 +57,10 @@ export function generateSpace(level: number): SpaceType {
   };
 
   const nuts: NutType[] = [];
-  const colors = [...COLORS];
-  shuffle(colors);
   let colorIndex = 0;
   for (let i = 0; i < requiredBolts; i++) {
-    const color = colors[colorIndex];
-    colorIndex = (colorIndex + 1) % colors.length;
+    const color = COLORS[colorIndex];
+    colorIndex = (colorIndex + 1) % COLORS.length;
     nuts.push(
       ...createArray<NutType>(boltSize, () => ({
         color,

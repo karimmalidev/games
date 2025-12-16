@@ -5,7 +5,19 @@ import { clickBolt, generateSpace, mergeSpace } from "./space";
 import type { BoltType, NutType, SpaceType } from "./space-type";
 import "./styles.css";
 import Button from "../../ui/components/Button";
-import { ChevronRightIcon, StarIcon, UndoIcon } from "lucide-react";
+import {
+  ChevronRightIcon,
+  CircleIcon,
+  DiamondIcon,
+  HeartIcon,
+  HexagonIcon,
+  OctagonIcon,
+  SquareIcon,
+  StarIcon,
+  TriangleIcon,
+  UndoIcon,
+  type LucideProps,
+} from "lucide-react";
 
 export default function NutsAndBolts() {
   const [level, setLevel] = useLocalStorage("level", 1);
@@ -149,6 +161,17 @@ function NutNode({
   spaces: SpaceType[];
   setSpaces: React.Dispatch<React.SetStateAction<SpaceType[]>>;
 }) {
+  const ShapeIcon = {
+    black: StarIcon,
+    red: HeartIcon,
+    yellow: TriangleIcon,
+    green: SquareIcon,
+    fuchsia: HexagonIcon,
+    blue: CircleIcon,
+    cyan: DiamondIcon,
+    white: OctagonIcon,
+  }[nut.color];
+
   return (
     <div
       className={cn(
@@ -211,7 +234,7 @@ function NutNode({
           )}
         ></div>
 
-        <StarIcon
+        <ShapeIcon
           className="absolute top-1/2 left-1/2 size-3/4! -translate-x-1/2 -translate-y-1/2 border-none opacity-50"
           strokeWidth="3px"
         />
