@@ -22,5 +22,6 @@ export type BoltType = {
 
 export type SpaceType = {
   state: "playing" | "win";
+  boltOnHold: BoltType | null;
   bolts: BoltType[];
 };

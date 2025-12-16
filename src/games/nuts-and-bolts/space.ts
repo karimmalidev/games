@@ -1,6 +1,11 @@
 import { createArray } from "../../lib/array";
 import { pick, shuffle } from "../../lib/random";
-import { COLORS, type NutType, type SpaceType } from "./space-type";
+import {
+  COLORS,
+  type BoltType,
+  type NutType,
+  type SpaceType,
+} from "./space-type";
 
 export function generateSpace(): SpaceType {
   const totalBolts = 12;
@@ -14,6 +19,7 @@ export function generateSpace(): SpaceType {
       size: boltSize,
       state: "idle",
     })),
+    boltOnHold: null,
   };
 
   const nuts: NutType[] = [];
@@ -32,4 +38,34 @@ export function generateSpace(): SpaceType {
   }
 
   return space;
+}
+
+export function clickBolt(space: SpaceType, bolt: BoltType) {
+  if (space.state != "playing") {
+    return;
+  }
+
+  if (space.boltOnHold == bolt) {
+    space.boltOnHold = null;
+    makeBoltIdle(bolt);
+  } else {
+    space.boltOnHold = bolt;
+    makeBoltHold(bolt);
+  }
+}
+
+function makeBoltIdle(bolt: BoltType) {
+  bolt.state = "idle";
+  bolt.nuts.forEach((nut) => (nut.state = "idle"));
+}
+
+function makeBoltHold(bolt: BoltType) {
+  bolt.state = "hold";
+  const first = bolt.nuts[0];
+  for (const nut of bolt.nuts) {
+    if (nut.color != first.color) {
+      return;
+    }
+    nut.state = "hold";
+  }
 }
