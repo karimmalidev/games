@@ -7,7 +7,8 @@ import {
   type SpaceType,
 } from "./space-type";
 
-const TOTAL_BOLTS_MIN = 3;
+const EMPTY_BOLTS = 2;
+const TOTAL_BOLTS_MIN = EMPTY_BOLTS + 2;
 const TOTAL_BOLTS_MAX = 15;
 const TOTAL_BLOTS_MARGIN = 0.5;
 
@@ -19,14 +20,14 @@ const LEVEL_EFFECTIVE_MAX = 100;
 
 function generateGameParams(level: number) {
   const scale =
-    (Math.min(LEVEL_EFFECTIVE_MAX, level) / LEVEL_EFFECTIVE_MAX) ** 0.6;
+    (Math.min(LEVEL_EFFECTIVE_MAX, level) / LEVEL_EFFECTIVE_MAX) ** 0.5;
   const totalBolts = randParam(
     scale,
     TOTAL_BOLTS_MIN,
     TOTAL_BOLTS_MAX,
     TOTAL_BLOTS_MARGIN,
   );
-  const requiredBolts = totalBolts - (totalBolts > 4 ? 2 : 1);
+  const requiredBolts = totalBolts - EMPTY_BOLTS;
   const boltSize = randParam(
     scale,
     BOLT_SIZE_MIN,

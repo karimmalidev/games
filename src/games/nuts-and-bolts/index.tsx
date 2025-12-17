@@ -6,17 +6,18 @@ import type { BoltType, NutType, SpaceType } from "./space-type";
 import "./styles.css";
 import Button from "../../ui/components/Button";
 import {
-  ChevronRightIcon,
   CircleIcon,
   DiamondIcon,
   HeartIcon,
   HexagonIcon,
+  LoaderIcon,
   OctagonIcon,
   SquareIcon,
   StarIcon,
   TriangleIcon,
   UndoIcon,
 } from "lucide-react";
+import { useEffect } from "react";
 
 export default function NutsAndBolts() {
   const [level, setLevel] = useLocalStorage("level", 1);
@@ -46,6 +47,15 @@ export default function NutsAndBolts() {
     setSpaces([generateSpace(level + 1)]);
   }
 
+  useEffect(() => {
+    if (space.state == "complete") {
+      const t = setTimeout(() => {
+        goToNextLevel();
+      }, 1000);
+      return () => clearTimeout(t);
+    }
+  }, [space.state]);
+
   return (
     <Game
       status={[["Level", level]]}
@@ -69,26 +79,24 @@ export default function NutsAndBolts() {
               />
             ))}
           </div>
+          {space.state == "complete" && (
+            <button className="absolute inset-0 flex flex-col items-center justify-center gap-4 rounded-sm bg-green-700/20 backdrop-blur-xs text-shadow-black/10 text-shadow-sm">
+              <h1 className="text-6xl font-bold text-green-400">Solved!</h1>
+              <p className="flex items-center gap-2 text-lg text-slate-400">
+                Upgrading level <LoaderIcon className="animate-spin" />
+              </p>
+            </button>
+          )}
         </div>
         <div className="mt-4 px-4">
-          {space.state == "playing" && (
-            <Button
-              onClick={doUndo}
-              className="w-fit"
-              disabled={spaces.length == 1}
-            >
-              <UndoIcon />
-              Undo
-            </Button>
-          )}
-          {space.state == "complete" && (
-            <Button
-              onClick={goToNextLevel}
-              className="w-full bg-green-600 hover:bg-green-600/80 active:bg-green-700"
-            >
-              Next Level <ChevronRightIcon />
-            </Button>
-          )}
+          <Button
+            onClick={doUndo}
+            className="w-fit"
+            disabled={space.state == "complete" || spaces.length == 1}
+          >
+            <UndoIcon />
+            Undo
+          </Button>
         </div>
       </div>
     </Game>
@@ -118,8 +126,8 @@ function BoltNode({
   return (
     <button
       style={{
-        aspectRatio: 4 / 1 / (bolt.size + 0.5),
-        width: `${(calcSpaceColumns(space) / 5) * 80}%`,
+        aspectRatio: 4 / 1 / (bolt.size + 0.25),
+        width: `${(calcSpaceColumns(space) / 5) * 90}%`,
       }}
       className={cn(
         "relative flex flex-1/6 grow-0 flex-col justify-end duration-500",
