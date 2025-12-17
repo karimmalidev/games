@@ -28,3 +28,9 @@ export type SpaceType = {
   boltOnHoldId: number | null;
   bolts: BoltType[];
 };
+
+export type SpaceParams = {
+  totalBolts: number;
+  requiredBolts: number;
+  boltSize: number;
+};

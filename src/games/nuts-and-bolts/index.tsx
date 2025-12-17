@@ -1,8 +1,8 @@
 import { cn } from "../../lib/utils";
 import { useLocalStorage } from "../../ui/hooks/use-local-storage";
 import Game from "../../ui/templates/game";
-import { clickBolt, generateSpace, mergeSpace } from "./space";
-import type { BoltType, NutType, SpaceType } from "./space-type";
+import { clickBolt } from "./logic/methods/click-bolt";
+import type { BoltType, NutType, SpaceType } from "./logic/types";
 import "./styles.css";
 import Button from "../../ui/components/Button";
 import {
@@ -18,10 +18,14 @@ import {
   UndoIcon,
 } from "lucide-react";
 import { useEffect } from "react";
+import { generateSpace } from "./logic/methods/generate-space";
+import { mergeSpace } from "./logic/methods/merge-space";
 
 export default function NutsAndBolts() {
   const [level, setLevel] = useLocalStorage("level", 1);
-  const [spaces, setSpaces] = useLocalStorage("spaces", [generateSpace(level)]);
+  const [spaces, setSpaces] = useLocalStorage("spaces-v1", [
+    generateSpace(level),
+  ]);
 
   const space = spaces[spaces.length - 1];
 
