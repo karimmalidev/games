@@ -1,1 +1,19 @@
 @import "tailwindcss";
+
+html,
+body {
+  font-family: Roboto, ui-sans-serif, system-ui, sans-serif;
+  color: white;
+  background-color: var(--color-emerald-900);
+}
+
+#root {
+  position: absolute;
+  inset: 0;
+}
+
+#content {
+  position: absolute;
+  inset: 50% 50%;
+  translate: -50% -50%;
+}

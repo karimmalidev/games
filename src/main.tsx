@@ -8,5 +8,3 @@ createRoot(document.getElementById("root")!).render(
     <Router />
   </StrictMode>,
 );
-
-document.body.className = "min-h-dvh w-full bg-slate-600";

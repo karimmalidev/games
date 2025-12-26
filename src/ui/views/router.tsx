@@ -1,5 +1,6 @@
 import games from "../../games";
 import type { GameType } from "../../games/game-type";
+import Content, { useWide } from "../templates/content";
 import Home from "./home";
 import { createContext, useContext, useEffect, useState } from "react";
 
@@ -7,6 +8,8 @@ export default function Router() {
   const [game, setGame] = useState<GameType | null>(
     games.find(({ id }) => id == window.location.search.substring(1)) || null,
   );
+
+  const wide = useWide();
 
   useEffect(() => {
     window.history.replaceState(
@@ -21,7 +24,9 @@ export default function Router() {
 
   return (
     <context.Provider value={[game, setGame]}>
-      {game ? <game.Node /> : <Home />}
+      <Content>
+        {game ? <game.Node wide={wide} /> : <Home wide={wide} />}
+      </Content>
     </context.Provider>
   );
 }
