@@ -1,30 +1,27 @@
-import type { MouseEventHandler, ReactNode } from "react";
 import { cn } from "../../lib/utils";
 
 export default function Button({
   children,
-  className,
   onClick,
-  size = "default",
-  disabled,
+  className,
+  disabled = false,
 }: {
-  children?: ReactNode;
+  children?: React.ReactNode;
+  onClick?: React.MouseEventHandler<HTMLButtonElement>;
   className?: string;
-  onClick?: MouseEventHandler<HTMLButtonElement>;
-  size?: "default" | "icon";
   disabled?: boolean;
 }) {
   return (
     <button
-      onClick={disabled ? undefined : onClick}
+      onClick={onClick}
       className={cn(
-        "group /10 relative flex h-12 shrink-0 items-center justify-center gap-3 rounded-full border-r-4 border-b-4 border-black/10 bg-slate-500 text-lg font-semibold text-white shadow-[3px_3px_0_rgba(0,0,0,0.1)] shadow-black/10 duration-100 ease-out",
+        "group relative flex cursor-pointer items-center justify-center gap-1 rounded-xl px-4 py-1 duration-100 ease-out *:shrink-0 *:duration-200 *:ease-in-out",
+        "border-r-3 border-b-3 border-black/10 bg-emerald-700 shadow-[3px_3px_rgb(0,0,0,0.1)]",
+        disabled && "cursor-not-allowed text-emerald-800 opacity-50",
         !disabled &&
-          "cursor-pointer hover:bg-amber-500 active:border-t-4 active:border-r-0 active:border-b-0 active:border-l-4 active:bg-amber-600 active:shadow-none",
-        disabled && "opacity-25",
-        size == "icon"
-          ? "aspect-square w-12 overflow-hidden text-[1.5em]"
-          : "rounded-xl p-4 px-6",
+          "hover:bg-emerald-600 hover:shadow-[2px_2px_rgb(0,0,0,0.1)]",
+        !disabled &&
+          "active:border-t-3 active:border-r-0 active:border-b-0 active:border-l-3 active:bg-emerald-800 active:shadow-none",
         className,
       )}
       disabled={disabled}

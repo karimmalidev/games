@@ -67,7 +67,7 @@ export default function NutsAndBolts() {
       disableRestart={spaces.length == 1 || space.state == "complete"}
     >
       <div className="flex h-full w-full flex-col">
-        <div className="relative flex h-full flex-1 items-center justify-center rounded-sm bg-slate-700">
+        <div className="relative flex h-full flex-1 items-center justify-center rounded-xl border-2 border-dashed border-emerald-900 bg-slate-800/50">
           <div
             className="grid h-full w-full content-evenly justify-evenly *:justify-self-center"
             style={{
@@ -92,13 +92,13 @@ export default function NutsAndBolts() {
             </button>
           )}
         </div>
-        <div className="mt-4 px-4">
+        <div className="my-2 px-2">
           <Button
             onClick={doUndo}
-            className="w-fit"
+            className="h-12 w-fit"
             disabled={space.state == "complete" || spaces.length == 1}
           >
-            <UndoIcon />
+            <UndoIcon className="size-6" />
             Undo
           </Button>
         </div>

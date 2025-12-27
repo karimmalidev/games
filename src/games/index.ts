@@ -12,7 +12,7 @@ const games: GameType[] = [
   },
   {
     id: "nuts-and-bolts",
-    name: "Nuts and Bolts",
+    name: "Nuts & Bolts",
     Icon: BoltIcon,
     Node: NutsAndBolts,
   },
